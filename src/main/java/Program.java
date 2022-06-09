@@ -63,7 +63,7 @@ public class Program {
 
             switch (choice) {
                 case 1:
-                    ManagerDB.Calc1();
+                    ManagerDB.Calc1(scr);
                     break;
                 case 2:
                     ManagerDB.Calc2();
@@ -87,9 +87,58 @@ public class Program {
                         \t\tDatabase menu
                                     
                         \t1- Print DB
-                        \t2- Make DB table
-                        \t3- Get values from the site
-                        \t4- Back to main menu
+                        \t2- Properties
+                        \t3- Make DB table
+                        \t4- Drop DB table
+                        \t5- Get values from the site
+                        \t6- Back to main menu
+                            """);
+                choice = scr.nextInt();
+                if (choice < 1 || choice > 6) {
+                    System.out.println("Non-existent menu item");
+                }
+            }
+            while (choice < 1 || choice > 6);
+
+            switch (choice) {
+                case 1:
+                    ManagerDB.PrintDB(scr);
+                    break;
+                case 2:
+                    Program.MenuProperties(scr);
+                    break;
+                case 3:
+                    ManagerDB.MakeTable();
+                    break;
+                case 4:
+                    ManagerDB.DropTable();
+                    break;
+                case 5:
+                    ParserRcs.main();
+                    break;
+                case 6:
+                    Program.MainMenu(scr);
+                    break;
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("Wrong input! Input only integer numbers please...\n");
+            scr.next();
+            Program.MenuDatabase(scr);
+        }
+    }
+
+    public static void MenuProperties(Scanner scr) throws IOException {
+        int choice;
+        try {
+            do {
+                System.out.print("""
+                        \t\tProperties menu
+                                    
+                        \t1- Select
+                        \t2- Add
+                        \t3- Remove
+                        \t4- Back to Database menu
                             """);
                 choice = scr.nextInt();
                 if (choice < 1 || choice > 4) {
@@ -100,23 +149,23 @@ public class Program {
 
             switch (choice) {
                 case 1:
-                    ManagerDB.PrintDB();
+                    ManagerDB.SelectProperties(scr);
                     break;
                 case 2:
-                    ManagerDB.MakeDB();
+                    ManagerDB.AddProperties(scr);
                     break;
                 case 3:
-                    ParserRcs.main();
+                    ManagerDB.RemoveProperties(scr);
                     break;
                 case 4:
-                    Program.MainMenu(scr);
+                    Program.MenuDatabase(scr);
                     break;
             }
 
         } catch (InputMismatchException e) {
             System.out.println("Wrong input! Input only integer numbers please...\n");
             scr.next();
-            Program.MenuDatabase(scr);
+            Program.MenuProperties(scr);
         }
     }
 
