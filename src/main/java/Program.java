@@ -108,10 +108,10 @@ public class Program {
                     Program.MenuProperties(scr);
                     break;
                 case 3:
-                    ManagerDB.MakeTable();
+                    ManagerDB.MakeTable(scr);
                     break;
                 case 4:
-                    ManagerDB.DropTable();
+                    ManagerDB.DropTable(scr);
                     break;
                 case 5:
                     ParserRcs.main();

@@ -15,7 +15,9 @@ public class ManagerDB {
     }
 
     private static void setUrl(String u) {
-        url = u;
+        if (u != null) {
+            url = u;
+        }
     }
 
     private static String username = "root";
@@ -25,7 +27,9 @@ public class ManagerDB {
     }
 
     private static void setUsername(String u) {
-        username = u;
+        if (u != null) {
+            username = u;
+        }
     }
 
     private static String password = "rootroot";
@@ -35,10 +39,13 @@ public class ManagerDB {
     }
 
     private static void setPassword(String p) {
-        password = p;
+        if (p != null) {
+            password = p;
+        }
     }
 
     public static void SelectProperties(Scanner scr) throws IOException {
+        // Try set selected properties profile to DB acsess methods
         PrintProperties(scr);
         Stream stream = Files.lines(Paths.get("properties"));
         String[] strArr = (String[]) stream.toArray(size -> new String[size]);
@@ -46,11 +53,15 @@ public class ManagerDB {
         int exit = scr.nextInt();
         if (exit != 0) {
             String profile[] = strArr[exit - 1].split(" ");
+            setUrl(profile[0]);
+            setUsername(profile[1]);
+            setPassword(profile[2]);
         }
         Program.MenuProperties(scr);
     }
 
     public static void AddProperties(Scanner scr) throws IOException {
+        // Try write one new string profile to "Properties" file.
 
         try {
             StringBuffer sb = new StringBuffer();
@@ -85,6 +96,7 @@ public class ManagerDB {
     }
 
     public static void RemoveProperties(Scanner scr) throws IOException {
+        // Call print "Properties" and try remove one from profiles in file.
         PrintProperties(scr);
         System.out.println("Select number of profile for removing, or 0 for return");
         try {
@@ -112,8 +124,8 @@ public class ManagerDB {
                     e.printStackTrace();
                 } finally {
                     if (writer != null) try {
-                        System.out.println("Profile " + (removeId + 1) + " removed!");
                         writer.close();
+                        System.out.println("Profile " + (removeId + 1) + " removed!");
                     } catch (IOException ignore) {
                     }
                 }
@@ -127,6 +139,7 @@ public class ManagerDB {
     }
 
     public static void PrintProperties(Scanner scr) throws IOException {
+        // Try streamread file with db properties and out.
         try {
             Stream stream = Files.lines(Paths.get("properties"));
             String[] strArr = (String[]) stream.toArray(size -> new String[size]);
@@ -147,9 +160,8 @@ public class ManagerDB {
     }
 
     public static void SendDB(String command) {
-
+    // Try send SQL command to DB.
         try {
-
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
 
             try (Connection conn = DriverManager.getConnection(ManagerDB.getUrl(), ManagerDB.getUsername(), ManagerDB.getPassword())) {
@@ -162,15 +174,29 @@ public class ManagerDB {
         }
     }
 
-    public static void MakeTable() {
-        ManagerDB.SendDB("CREATE TABLE rcscomponent (Id INT PRIMARY KEY AUTO_INCREMENT, Vendor VARCHAR(20), Form VARCHAR(20), Capacity DECIMAL(5,2), Sizes VARCHAR(20), Voltage DECIMAL(5,2), MinVoltage DECIMAL(5,2), Weight DECIMAL(5,2))");
+    public static void MakeTable(Scanner scr) throws IOException {
+        // Try send SQL command for create new batt table.
+        try {
+            ManagerDB.SendDB("CREATE TABLE rcscomponent (Id INT PRIMARY KEY AUTO_INCREMENT, Vendor VARCHAR(20), Form VARCHAR(20), Capacity DECIMAL(5,2), Sizes VARCHAR(20), Voltage DECIMAL(5,2), MinVoltage DECIMAL(5,2), Weight DECIMAL(5,2))");
+        } catch (Exception e) {
+            System.out.println("Connection failed... Please check internet connection or try remake DB table");
+            Program.MenuDatabase(scr);
+        }
     }
 
-    public static void DropTable() {
-        ManagerDB.SendDB("DROP TABLE `parsedbatt`.`rcscomponent`");
+    public static void DropTable(Scanner scr) throws IOException {
+        // Try send SQL command for drop batt table.
+        try {
+            ManagerDB.SendDB("DROP TABLE `parsedbatt`.`rcscomponent`");
+            System.out.println();
+        } catch (Exception e) {
+            System.out.println("Connection failed... Please check internet connection or try remake DB table");
+            Program.MenuDatabase(scr);
+        }
     }
 
     public static void PrintDB(Scanner scr) throws IOException {
+        // Try connect to DB and get all pos.from table to print.
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = DriverManager.getConnection(ManagerDB.getUrl(), ManagerDB.getUsername(), ManagerDB.getPassword())) {
@@ -197,6 +223,7 @@ public class ManagerDB {
     }
 
     public static void Calc1(Scanner scr) {
+        // Try construct ACB by user input settings and out result.
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = DriverManager.getConnection(ManagerDB.getUrl(), ManagerDB.getUsername(), ManagerDB.getPassword())) {
@@ -264,6 +291,7 @@ public class ManagerDB {
 
     public static void Calc2() {
         try {
+            // Try automated construct ACB by capacity and cells.
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             Scanner scr = new Scanner(System.in);
             try (Connection conn = DriverManager.getConnection(ManagerDB.getUrl(), ManagerDB.getUsername(), ManagerDB.getPassword())) {
