@@ -87,38 +87,29 @@ public class Program {
                         \t\tDatabase menu
                                     
                         \t1- Print DB
-                        \t2- Properties
-                        \t3- Make DB table
-                        \t4- Drop DB table
-                        \t5- Get values from the site
-                        \t6- Back to main menu
+                        \t2- Update
+                        \t3- Properties
+                        \t4- Back to main menu
                             """);
                 choice = scr.nextInt();
-                if (choice < 1 || choice > 6) {
+                if (choice < 1 || choice > 4) {
                     System.out.println("Non-existent menu item");
                 }
             }
-            while (choice < 1 || choice > 6);
+            while (choice < 1 || choice > 4);
 
             switch (choice) {
                 case 1:
                     ManagerDB.PrintDB(scr);
                     break;
                 case 2:
-                    Program.MenuProperties(scr);
+                    ParserRcs.main(scr);
                     break;
                 case 3:
-                    ManagerDB.MakeTable(scr);
+                    Program.MenuProperties(scr);
                     break;
                 case 4:
-                    ManagerDB.DropTable(scr);
-                    break;
-                case 5:
-                    ParserRcs.main();
-                    break;
-                case 6:
                     Program.MainMenu(scr);
-                    break;
             }
 
         } catch (InputMismatchException e) {
@@ -149,13 +140,13 @@ public class Program {
 
             switch (choice) {
                 case 1:
-                    ManagerDB.SelectProperties(scr);
+                    ManagerProperties.SelectProperties(scr);
                     break;
                 case 2:
-                    ManagerDB.AddProperties(scr);
+                    ManagerProperties.AddProperties(scr);
                     break;
                 case 3:
-                    ManagerDB.RemoveProperties(scr);
+                    ManagerProperties.RemoveProperties(scr);
                     break;
                 case 4:
                     Program.MenuDatabase(scr);

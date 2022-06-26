@@ -5,12 +5,23 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParserRcs {
 
-    public static void main() throws IOException {
+    public static void main(Scanner scr) throws IOException {
+        try {
+            ManagerDB.DropTable(scr);
+            System.out.println("\t\tTable dropped");
+        } catch (Exception ignored) {
+        } finally {
+            ManagerDB.MakeTable(scr);
+            System.out.println("\t\tNew table created!");
+        }
+
+        System.out.println("\t\tParsing...");
 
         for (int i = 0; i < 3; i++) {
             Document rcscomponents = Jsoup.connect("https://www.rcscomponents.kiev.ua/modules.php?name=Asers_Shop&s_op=search&query=li-pol%20mAh&page=" + i).get();
@@ -27,7 +38,7 @@ public class ParserRcs {
                     String vend = "0";
                     String sizeString = "0";
                     String form = "0";
-                    float cap = 0.0f;
+                    int cap = 0;
                     float weig = 0.0f;
                     float vol = 0.0f;
                     float minVolt = 0.0f;
@@ -44,7 +55,7 @@ public class ParserRcs {
                                     sizeString = m.group(2);
                                     break;
                                 case ("Ємність"):
-                                    cap = Float.parseFloat(m.group(2).replaceAll("[a-z]", " "));
+                                    cap = Integer.parseInt(m.group(2).replaceAll("[a-z][A-Z]", " "));
                                     break;
                                 case ("Форма"):
                                     form = (m.group(2));
@@ -62,21 +73,20 @@ public class ParserRcs {
                         }
 
                         if (!Objects.equals(form, "0")) {
-                            ManagerDB.SendDB("INSERT parsedbatt.rcscomponent (Vendor, Form , Capacity , Sizes, Voltage, MinVoltage, Weight) VALUES ('"
-                                    + vend + "', '"
-                                    + form + "', "
-                                    + cap + ", '"
-                                    + sizeString + "', "
-                                    + vol + ", "
-                                    + minVolt + ", "
-                                    + weig + ")");
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("INSERT parsedbatt.rcscomponent (Vendor, Form , Capacity , Sizes, Voltage, MinVoltage, Weight) VALUES ('");
+                            sb.append(vend).append("', '").append(form).append("', ").append(cap).append(", '").append(sizeString).append("', ");
+                            sb.append(vol).append(", ").append(minVolt).append(", ").append(weig).append(")");
+                            ManagerDB.SendDB(sb.toString());
                         }
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("\tInvalid parse value");
             }
         }
+        System.out.println("\n\t\tDB updated!\n");
+        Program.MenuDatabase(scr);
     }
 }
 
